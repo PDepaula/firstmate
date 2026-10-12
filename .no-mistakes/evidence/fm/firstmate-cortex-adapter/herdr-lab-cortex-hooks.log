@@ -1,0 +1,14 @@
+pane=w1:p1
+--- after (none):
+{"error":{"code":"agent_not_found","message":"agent target w1:p1 not found"},"id":"cli:agent:get"}
+
+--- after SessionStart:
+{"id":"cli:agent:get","result":{"agent":{"agent":"cortex","agent_status":"idle","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","pane_id":"w1:p1","revision":0,"state_change_seq":1,"tab_id":"w1:t1","terminal_id":"term_65da97ae4b7cb1","workspace_id":"w1"},"type"
+--- after UserPromptSubmit:
+{"id":"cli:agent:get","result":{"agent":{"agent":"cortex","agent_status":"working","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","pane_id":"w1:p1","revision":1,"state_change_seq":2,"tab_id":"w1:t1","terminal_id":"term_65da97ae4b7cb1","terminal_title":"pdp@om
+--- after Stop:
+{"id":"cli:agent:get","result":{"agent":{"agent":"cortex","agent_status":"idle","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","pane_id":"w1:p1","revision":1,"state_change_seq":3,"tab_id":"w1:t1","terminal_id":"term_65da97ae4b7cb1","terminal_title":"pdp@omarc
+--- after SessionEnd:
+{"error":{"code":"agent_not_found","message":"agent target w1:p1 not found"},"id":"cli:agent:get"}
+
+teardown-exit=0

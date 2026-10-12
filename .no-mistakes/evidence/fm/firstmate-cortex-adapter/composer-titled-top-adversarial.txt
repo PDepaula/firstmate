@@ -1,0 +1,8 @@
+rounded-titled         -> empty
+rounded-untitled       -> empty
+light-titled           -> unknown
+double-titled          -> unknown
+heavy-titled           -> unknown
+ascii-titled           -> unknown
+rounded-nonascii       -> unknown
+ascii-separator        -> pending-unproven
