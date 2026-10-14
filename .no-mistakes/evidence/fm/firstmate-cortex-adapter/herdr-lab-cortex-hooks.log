@@ -1,14 +1,23 @@
-pane=w1:p1
---- after (none):
+session=fm-lab-cortexhk-3914859-26933
+# baseline
 {"error":{"code":"agent_not_found","message":"agent target w1:p1 not found"},"id":"cli:agent:get"}
+# SessionStart
+{"agent":"cortex","agent_status":"idle","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","pane_id":"w1:p1","revision":1,"state_change_seq":1,"tab_id":"w1:t1","terminal_id":"term_65dcc013557c91","terminal_title":"pdp@omarchy:~/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","terminal_title_stripped":"pdp@omarchy:~/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","workspace_id":"w1"}
+# UserPromptSubmit
+{"agent":"cortex","agent_status":"working","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","pane_id":"w1:p1","revision":1,"state_change_seq":2,"tab_id":"w1:t1","terminal_id":"term_65dcc013557c91","terminal_title":"pdp@omarchy:~/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","terminal_title_stripped":"pdp@omarchy:~/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","workspace_id":"w1"}
+# Stop
+.rw-r--r--   449 pdp  14 Oct 07:24   hook-Stop.sh
+.rw-r--r--   428 pdp  14 Oct 07:24   hook-UserPromptSubmit.sh
 
---- after SessionStart:
-{"id":"cli:agent:get","result":{"agent":{"agent":"cortex","agent_status":"idle","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","pane_id":"w1:p1","revision":0,"state_change_seq":1,"tab_id":"w1:t1","terminal_id":"term_65da97ae4b7cb1","workspace_id":"w1"},"type"
---- after UserPromptSubmit:
-{"id":"cli:agent:get","result":{"agent":{"agent":"cortex","agent_status":"working","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","pane_id":"w1:p1","revision":1,"state_change_seq":2,"tab_id":"w1:t1","terminal_id":"term_65da97ae4b7cb1","terminal_title":"pdp@om
---- after Stop:
-{"id":"cli:agent:get","result":{"agent":{"agent":"cortex","agent_status":"idle","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4RR08EGJBRBKXVS44JAP6S3","pane_id":"w1:p1","revision":1,"state_change_seq":3,"tab_id":"w1:t1","terminal_id":"term_65da97ae4b7cb1","terminal_title":"pdp@omarc
---- after SessionEnd:
+01M4X5KDHGY6XH1CF1VKXYPMTF HEAD ❯
+{"agent":"cortex","agent_status":"idle","cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","focused":true,"foreground_cwd":"/home/pdp/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","pane_id":"w1:p1","revision":1,"state_change_seq":3,"tab_id":"w1:t1","terminal_id":"term_65dcc013557c91","terminal_title":"pdp@omarchy:~/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","terminal_title_stripped":"pdp@omarchy:~/.no-mistakes/worktrees/863028700938/01M4X5KDHGY6XH1CF1VKXYPMTF","workspace_id":"w1"}
+# SessionEnd
+drwx------     - pdp  14 Oct 07:24   cx-lab.cortex-plugin
+.rw-r--r--  1.5k pdp  14 Oct 07:24   cmds.tsv
+.rw-r--r--   407 pdp  14 Oct 07:24   hook-SessionEnd.sh
+.rw-r--r--   207 pdp  14 Oct 07:24   hook-SessionStart.sh
+.rw-r--r--   449 pdp  14 Oct 07:24   hook-Stop.sh
+.rw-r--r--   428 pdp  14 Oct 07:24   hook-UserPromptSubmit.sh
+
+01M4X5KDHGY6XH1CF1VKXYPMTF HEAD ❯
 {"error":{"code":"agent_not_found","message":"agent target w1:p1 not found"},"id":"cli:agent:get"}
-
-teardown-exit=0
