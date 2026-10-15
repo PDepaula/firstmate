@@ -238,7 +238,8 @@
 #   task's generation in --mod-option values; no global or project config is
 #   edited. Its --effort is passed only where the model's accepted set is
 #   verified, because an unknown value exits the launch.
-#   Cortex Code (cortex) is worker-only too: --dangerously-allow-all-tool-calls
+#   Cortex Code (cortex) is worker-only and tmux/herdr-only too (see the
+#   backend refusal below): --dangerously-allow-all-tool-calls
 #   (the --bypass alias) approves tool calls and also skips its project-trust
 #   dialog, so a fresh worktree needs no pre-registration and no entry is
 #   written to ~/.snowflake/cortex/cortex.json. --plugin-dir points at a
