@@ -1,0 +1,35 @@
+relaunch: warning: /home/pdp/claude_code_stage_dir/fm-cortex-herdr.1ieA8T/home/data/ct/launch-brief.md records no ship branch; defaulting to legacy branch fm/ct
+warning: /home/pdp/claude_code_stage_dir/fm-cortex-herdr.1ieA8T/home/data/ct/launch-brief.md records no delivery contract line (scaffolded before ship briefs recorded one); launching on the explicit --mode no-mistakes - confirm its definition of done matches
+spawned ct harness=cortex kind=ship mode=no-mistakes yolo=off window=fm-lab-cortex-2196479:w1:p2 worktree=/home/pdp/claude_code_stage_dir/fm-cortex-herdr.1ieA8T/wt
+agent_state=alive after 3s
+--- screen ---
+  not later clarifications actually supplied by the captain.
+  Use everything under `## Captain intent authorized for --intent` through the end of this
+  brief, including any nested subheadings but excluding that heading, plus any later words the
+   captain actually supplied as `--intent`; never include Firstmate specification or other
+  mixed Task content.
+  Preserve those words without adding speaker labels or direct address.
+  Firstmate-authored constraints, acceptance criteria, implementation details, decisions, and
+  tradeoffs are specification, not captain intent.
+  The Definition of done's rule that `--intent` must be self-sufficient still governs the
+  string you pass: resolve any report, decision, or PR the intent below refers to into its
+  substance rather than passing the pointer.
+
+  ## Captain intent authorized for --intent
+  Reply with the single word READY and then stop. Do not run any tool.
+
+* READY
+Auto used claude-opus-4-6
+View session usage with /stats · Rate this session with /feedback rate
+
+╭───────────────────────────────────────────────────────────────────────────── New Session ──╮
+ › Type your message...
+╰────────────────────────────────────────────────────────────────────────────────────────────╯
+
+>> bypass safeguards  |  teams: off  |  plan: off  |  guard: off                     ⧉ GN07031
+view: compact • ? for help •  ct
+--- herdr agent get ---
+{"id":"cli:agent:get","result":{"agent":{"agent":"cortex","agent_status":"idle","cwd":"/home/pdp/claude_code_stage_dir/fm-cortex-herdr.1ieA8T/wt","focused":true,"foreground_cwd":"/home/pdp/claude_code_stage_dir/fm-cortex-herdr.1ieA8T/wt","pane_id":"w1:p2","revision":2,"state_change_seq":3,"tab_id":"w1:t2","terminal_id":"term_65dd64ab6b1302","terminal_title":"cortex","terminal_title_stripped":"cortex","workspace_id":"w1"},"type":"agent_info"}}
+composer_state=empty
+exit: stopped ct harness=cortex backend=herdr endpoint=fm-lab-cortex-2196479:w1:p2 worktree=/home/pdp/claude_code_stage_dir/fm-cortex-herdr.1ieA8T/wt
+agent_state_after_exit=dead

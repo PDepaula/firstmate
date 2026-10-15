@@ -1,0 +1,15 @@
+FM_TEST_BEGIN 2026-10-15T00:38:31Z tests/fm-cortex-harness.test.sh family=pure-contract-unit expected_gate_skip=none
+ok - Cortex native identity; anchored liveness
+ok - worker-only resolution and lifecycle capabilities
+ok - composer shape, draft safety, and independent delivery signals
+ok - private plugin lifecycle and stale-generation rejection
+ok - Herdr self-registration reports through the pane CLI and is a no-op elsewhere
+ok - scout launch carries autonomy, plugin, typed brief and hooks; xhigh effort omitted
+FM_TEST_END 2026-10-15T00:38:37Z tests/fm-cortex-harness.test.sh exit=0 duration_ms=5806 gate_skip=false
+FM_TEST_SUMMARY total=1 failed=0 skipped_gate=0 duration_ms=5868
+FM_TEST_SUMMARY_FAMILY family=pure-contract-unit count=1 duration_ms=5806 failed=0
+FM_TEST_SLOWEST rank=1 script=tests/fm-cortex-harness.test.sh duration_ms=5806
+
+real	0m5.895s
+user	0m1.726s
+sys	0m1.284s
