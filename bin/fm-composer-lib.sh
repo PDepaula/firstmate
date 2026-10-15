@@ -35,6 +35,10 @@
 #               the tmux pi foreground-process probe). Identity is what makes
 #               Pi's blank separated composer provable; with identity=0 that
 #               shape stays `unknown`.
+#   cortex=1    the caller proved the pane's foreground process is Cortex Code
+#               (tmux exact process name, herdr native agent probe). Opt-in:
+#               only then is a TITLED rounded top rule tolerated as a
+#               composer; without it a titled box stays ambiguous.
 #   rows=<n>    the capture's bounded row count (informational).
 #
 # THE STRICT BLANK-ROW RULE (captain decision blank-row-injection-posture,
@@ -359,7 +363,8 @@ fm_composer_strip_ghost() {
 # asking what a worker is doing, and the two must not be conflated.
 # Delivery-only rendered busy footers per harness. claude/codex: "esc to
 # interrupt"; opencode: "esc interrupt"; pi: "Working..."; omp: "Working…"; grok: "Ctrl+c:cancel"; agy: "esc to cancel";
-# devin: "esc twice to interrupt" and its "❭ Guide Devin while it works" working composer.
+# devin: "esc twice to interrupt" and its "❭ Guide Devin while it works" working composer;
+# cortex: "(esc to interrupt)" on its spinner row and "Type to queue message..." in its working composer;
 # commandcode: "esc to interrupt" beside a bullet-framed elapsed cell.
 # Claude's current spinner has a rotating glyph and word, but every active-turn
 # line has an ellipsis followed by a parenthesized elapsed duration. Keep this
@@ -390,6 +395,10 @@ FM_DELIVERY_CLAUDE_BUSY_REGEX_DEFAULT='esc to interrupt|…[[:space:]]+\([0-9]+[
 # Devin 3000.11.1: the working composer and interrupt hint are independent
 # delivery signals. Neither is used as semantic worker-state evidence.
 FM_DELIVERY_DEVIN_BUSY_REGEX_DEFAULT='esc twice to interrupt|^[[:space:]]*❭ Guide Devin while it works$'
+# Cortex Code 1.1.104: the spinner row ends `(esc to interrupt)` and the working
+# composer reads `Type to queue message...`, with a `Type to queue next message`
+# footer. Independent delivery signals, never semantic worker-state evidence.
+FM_DELIVERY_CORTEX_BUSY_REGEX_DEFAULT='\(esc to interrupt\)|Type to queue message\.\.\.|Type to queue next message'
 # Command Code 1.74.1 renders one status row while a turn runs, for example
 # ` ○ Contemplificating…  esc to interrupt • 2s • ↓ 41`: the `esc to interrupt`
 # token and the bullet-framed elapsed cell are independent delivery signals, and
@@ -444,6 +453,7 @@ fm_busy_lines_match() {  # [harness]
     case "$harness" in
       claude) regex=$FM_DELIVERY_CLAUDE_BUSY_REGEX_DEFAULT ;;
       devin) regex=$FM_DELIVERY_DEVIN_BUSY_REGEX_DEFAULT ;;
+      cortex) regex=$FM_DELIVERY_CORTEX_BUSY_REGEX_DEFAULT ;;
       commandcode) regex=$FM_DELIVERY_COMMANDCODE_BUSY_REGEX_DEFAULT ;;
       codex) regex=$FM_DELIVERY_CODEX_BUSY_REGEX_DEFAULT ;;
       opencode) regex=$FM_DELIVERY_OPENCODE_BUSY_REGEX_DEFAULT ;;
@@ -482,12 +492,16 @@ FM_COMPOSER_SHELL_PROMPT_GLYPHS=$(printf '%s\n' '>' '$' '%' '#')
 # `Add a follow-up` once a turn has completed (verified live on cursor-agent
 # 2026.08.11-e8db854). Devin renders the anchored `Ask Devin to build features,
 # fix bugs, or work on your code` as dim text after its `❭` glyph (verified
-# live, devin 3000.11.1). Command Code renders the anchored `Ask your question...`
+# live, devin 3000.11.1). Cortex Code renders `Type your message...` when idle
+# and `Type to queue message...` while a turn runs, inside its bordered `›`
+# composer: a reverse-video cursor cell on the first letter, then dim text
+# (verified live, cortex 1.1.104); the plain row is what these anchors match.
+# Command Code renders the anchored `Ask your question...`
 # after its `❯` glyph (verified live, Command Code 1.74.1); its truecolor is too
 # bright for the default ghost ceiling, so fm_composer_classify_screen reads its
 # screen with a raised one. FM_COMPOSER_IDLE_RE overrides for an unverified harness;
 # matching is case-insensitive.
-FM_COMPOSER_IDLE_RE_DEFAULT='^Type a message\.\.\.$|^Ask anything(\.\.\.|…)|^Plan, search, build anything$|^Add a follow-up$|^Ask Devin to build features, fix bugs, or work on your code$|^Ask your question\.\.\.$'
+FM_COMPOSER_IDLE_RE_DEFAULT='^Type a message\.\.\.$|^Ask anything(\.\.\.|…)|^Plan, search, build anything$|^Add a follow-up$|^Ask Devin to build features, fix bugs, or work on your code$|^Ask your question\.\.\.$|^Type your message\.\.\.$|^Type to queue message\.\.\.$'
 
 # Opencode draws a mode/model footer line INSIDE its left-bar composer
 # ("Build · GPT-5.5 Fast OpenAI · high"). It is composer furniture, not typed
@@ -822,10 +836,10 @@ _fm_composer_titled_rule_row() {  # <trimmed-row> <plain-rule-spaces>
 
 # Row-scan results are returned through FM_COMPOSER_SCAN_* globals (bash 3.2
 # has no nameref); they are internal to this owner.
-_fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap]
-  local pane=$1 cy=${2:-}
+_fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap] [cortex]
+  local pane=$1 cy=${2:-} cortex_proven=${4:-0}
   local line indent left_stripped trimmed kind family side_family
-  local top_inner top_spaces='' geometry_check=0 geometry_ambiguous=0
+  local top_inner top_spaces='' geometry_check=0 geometry_ambiguous=0 titled_top=0
   local content_inner content_spaces bottom_inner bottom_spaces glyph
   local current_indent='' current_family='' row=0 top=-1 valid=0 content_rows=0
   # Complete-box results: the box containing the cursor (cursor mode) or the
@@ -953,7 +967,8 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap]
     # lower shell prompts as staleness evidence for cursorless selection.
     # Pi's cost footer can open with `$0.000`; that is furniture, not a prompt.
     if [ "$top" -lt 0 ] && fm_composer_leading_shell_glyph_var glyph "$trimmed" \
-       && ! _fm_composer_row_is_pi_status "$trimmed"; then
+       && ! _fm_composer_row_is_pi_status "$trimmed" \
+       && ! _fm_composer_row_is_cortex_status "$trimmed"; then
       FM_COMPOSER_SCAN_SHELL_ROW=$row
     elif fm_composer_leading_agent_glyph_var glyph "$trimmed"; then
       FM_COMPOSER_SCAN_BARE_ROW=$row
@@ -978,6 +993,7 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap]
       box_glyph=''
       geometry_ambiguous=0
       geometry_check=1
+      titled_top=0
       top_inner=$trimmed
       case "$family" in
         rounded) top_inner=${top_inner#╭}; top_inner=${top_inner%╮}; top_spaces=${top_inner//─/ } ;;
@@ -987,7 +1003,29 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap]
         ascii) top_inner=${top_inner#+}; top_inner=${top_inner%+}; top_spaces=${top_inner//-/ } ;;
       esac
       case "$top_spaces" in
-        *[![:space:]]*) geometry_check=0; geometry_ambiguous=1 ;;
+        *[![:space:]]*)
+          # A TITLED top rule (Cortex Code writes the session name there,
+          # verified cortex 1.1.104) is tolerated only for a pane the caller
+          # proved is Cortex (the cortex=1 capability: tmux exact foreground
+          # process name, herdr native agent probe), only on the rounded
+          # family, and only when the title is printable ASCII embedded in
+          # the rule, so the inner still starts and ends with `─` and every
+          # title cell collapses to a space; the bottom rule and every
+          # content row are then held to that same width. The tolerance is
+          # also conditional on the box proving an agent prompt glyph row
+          # when it closes (titled_top), because a titled box with no glyph
+          # is exactly the decorative banner or dialog this rule must keep
+          # ambiguous. Without the identity every titled box stays ambiguous.
+          if [ "$cortex_proven" = 1 ] && [ "$family" = rounded ] \
+             && _fm_composer_titled_rule_inner_ok "$top_inner"; then
+            titled_top=1
+            top_spaces=${top_inner//─/ }
+            top_spaces=$(printf '%s' "$top_spaces" | LC_ALL=C sed 's/[!-~]/ /g')
+          else
+            geometry_check=0
+            geometry_ambiguous=1
+          fi
+          ;;
       esac
     elif [ "$kind" = bottom ] || { [ "$kind" = ascii ] && [ "$top" -ge 0 ]; }; then
       if [ "$top" -ge 0 ] && [ "$family" = "$current_family" ] \
@@ -1011,6 +1049,9 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap]
               geometry_ambiguous=1
             fi
           fi
+        fi
+        if [ "$titled_top" = 1 ] && [ "$box_glyph_row" -lt 0 ]; then
+          geometry_ambiguous=1
         fi
         if [ -n "$cy" ]; then
           if [ "$top" -lt "$cy" ] && [ "$cy" -le "$row" ]; then
@@ -1085,6 +1126,26 @@ EOF
   if [ -n "$cy" ] && [ "$top" -ge 0 ] && [ "$top" -lt "$cy" ]; then
     FM_COMPOSER_SCAN_UNSAFE=1
   fi
+}
+
+# 0 when a rounded top rule's inner (corners already stripped) reads as a
+# printable ASCII TITLE embedded in the rule: it starts and ends with `─` and
+# the title between them is printable ASCII only, so a non-ASCII or malformed
+# title stays ambiguous. Rounded only: Cortex Code draws no other family. The
+# caller gates this on the cortex=1 capability.
+_fm_composer_titled_rule_inner_ok() {  # <top-inner>
+  local inner=$1 spaces
+  fm_composer_normalize_trim_var inner
+  case "$inner" in
+    '─'*'─') ;;
+    *) return 1 ;;
+  esac
+  spaces=${inner//─/ }
+  spaces=$(printf '%s' "$spaces" | LC_ALL=C sed 's/[!-~]/ /g')
+  case "$spaces" in
+    *[![:space:]]*) return 1 ;;
+  esac
+  return 0
 }
 
 # 0 when a mismatched bottom border reads as a legitimate TITLE: the trimmed
@@ -1265,6 +1326,20 @@ _fm_composer_row_is_omp_status() {  # <trimmed-row>
 # the separated pair; a `$` cost cell must not count as a dead-shell prompt.
 _fm_composer_row_is_pi_status() {  # <trimmed-row>
   fm_composer_idle_matches "$1" "$FM_COMPOSER_PI_STATUS_RE_DEFAULT" sensitive
+}
+
+# _fm_composer_row_is_cortex_status: 0 when the trimmed row is Cortex Code's
+# mode line drawn under its composer (`>> bypass safeguards  |  teams: off  |
+# plan: off  |  guard: on ...`, verified cortex 1.1.104). Its leading `>>` would
+# otherwise read as a dead-shell prompt below the composer and make the
+# composer unprovable. The wording follows the terminal width (`teams: off` at
+# 100 columns, `teams mode: off` at 120), so the match needs the `>> ` opener,
+# a `teams` cell, and a later `plan` cell, all ` | ` separated.
+_fm_composer_row_is_cortex_status() {  # <trimmed-row>
+  case "$1" in
+    '>> '*' | '*teams*' | '*plan*) return 0 ;;
+  esac
+  return 1
 }
 
 # _fm_composer_row_is_braille_furniture: 0 when the row is non-blank and its
@@ -1966,7 +2041,7 @@ fm_composer_dialog_sink_release() {
 
 fm_composer_classify_screen() {  # <caps> <screen> [cursor_row] [identity]
   local caps=$1 screen=$2 cy=${3:-} identity=${4:-}
-  local styled=0 cursor=0 has_identity=0 kv plain
+  local styled=0 cursor=0 has_identity=0 cortex_proven=0 kv plain
   # Note the dialog before any early return so a pending picker is still named.
   fm_composer_note_blocking_dialog "$screen" || true
   while IFS= read -r kv; do
@@ -1974,6 +2049,7 @@ fm_composer_classify_screen() {  # <caps> <screen> [cursor_row] [identity]
       styled=1) styled=1 ;;
       cursor=1) cursor=1 ;;
       identity=1) has_identity=1 ;;
+      cortex=1) cortex_proven=1 ;;
     esac
   done <<EOF
 $caps
@@ -1993,7 +2069,7 @@ EOF
     case "$cy" in *[!0-9]*) printf 'unknown'; return 0 ;; esac
   fi
   plain=$(printf '%s\n' "$screen" | fm_composer_strip_ansi)
-  _fm_composer_scan_screen "$plain" "$cy"
+  _fm_composer_scan_screen "$plain" "$cy" '' "$cortex_proven"
   if [ -n "$cy" ]; then
     # Cursor mode (tmux): the shape CONTAINING the cursor is the composer.
     if [ "$FM_COMPOSER_SCAN_UNSAFE" = 1 ]; then

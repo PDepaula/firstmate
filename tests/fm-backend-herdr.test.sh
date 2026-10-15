@@ -3891,6 +3891,33 @@ test_composer_state_real_text_is_pending() {
   pass "fm_backend_herdr_composer_state: real composer text reads pending"
 }
 
+# A titled rounded top rule reads as a composer only for a pane whose native
+# agent probe names cortex; the identical capture under any other agent, or no
+# agent record, keeps the ambiguous verdict every harness reads.
+cortex_titled_composer_case() {  # <dir-suffix> <agent-json-or-error-file-body>
+  local dir="$TMP_ROOT/composer-titled-$1" resp log fb
+  mkdir -p "$dir/responses"; resp="$dir/responses"; log="$dir/log"; : > "$log"
+  printf '╭────────────── New Session ──╮\n│ ❯                           │\n╰─────────────────────────────╯\n\n>> bypass safeguards  |  teams: off  |  plan: off\n' > "$resp/1.out"
+  printf '%s\n' "$2" > "$resp/2.out"
+  printf '%s\n' "$2" > "$resp/3.out"
+  fb=$(make_herdr_fakebin "$dir")
+  PATH="$fb:$PATH" FM_HERDR_LOG="$log" FM_HERDR_RESPONSES="$resp" \
+    bash -c '. "$0/bin/backends/herdr.sh"; fm_backend_herdr_composer_state default:w1:p2' "$ROOT"
+}
+
+test_composer_state_titled_box_requires_cortex_identity() {
+  local out
+  out=$(cortex_titled_composer_case cortex '{"result":{"agent":{"agent":"cortex","agent_status":"idle"}}}')
+  [ "$out" = empty ] || fail "a titled box under a cortex agent probe should read empty, got '$out'"
+  out=$(cortex_titled_composer_case other '{"result":{"agent":{"agent":"claude","agent_status":"idle"}}}')
+  [ "$out" = unknown ] || [ "$out" = pending-unproven ] \
+    || fail "a titled box under a non-cortex agent must stay ambiguous, got '$out'"
+  out=$(cortex_titled_composer_case absent '{"error":{"code":"agent_not_found"}}')
+  [ "$out" = unknown ] || [ "$out" = pending-unproven ] \
+    || fail "a titled box with no agent record must stay ambiguous, got '$out'"
+  pass "fm_backend_herdr_composer_state: titled rounded top rule is a composer only under a cortex agent probe"
+}
+
 # Issue #3436: Grok 1.0.5's real bottom border is three columns wider than
 # the aligned top and content rows. Herdr has no cursor anchor, so the old
 # geometry verdict was unknown even when this composer was genuinely idle.
@@ -6023,6 +6050,7 @@ test_busy_state_unknown_on_no_agent
 test_composer_state_bare_prompt_is_empty
 test_composer_state_styled_placeholder_draft_is_pending
 test_composer_state_real_text_is_pending
+test_composer_state_titled_box_requires_cortex_identity
 test_composer_state_grok_oversized_title_preserves_safe_verdicts
 test_composer_state_popup_placeholder_fill_is_pending
 test_composer_state_unknown_on_capture_failure
