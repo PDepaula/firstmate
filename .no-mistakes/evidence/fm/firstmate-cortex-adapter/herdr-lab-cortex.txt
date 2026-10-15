@@ -1,0 +1,7 @@
+Herdr lab (fm-lab-cortex3-*), real cortex v1.2.14 launched with generated per-task plugin, env -u CLAUDECODE guard:
+after start : agent=cortex agent_status=idle agent_session=null seq=2
+prompt run  : cortex:working (seq=3) -> cortex:idle (seq=4)
+after /quit : agent get -> agent_not_found (release-agent applied)
+Unguarded launch (CLAUDECODE inherited): herdr:claude claim; firstmate:cortex working reports ignored (matches docs/verification/cortex.md)
+teardown: exit 0, default-session tripwire clean
+tmux live e2e (FM_CORTEX_SIGNALS_LIVE=1): 5/5 ok
