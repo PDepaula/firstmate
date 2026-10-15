@@ -14,8 +14,8 @@
 # UserPromptSubmit opens a turn; Stop and SessionEnd close it. Cortex fires
 # Stop on normal completion and on an Escape interrupt alike, so unlike
 # Devin the control plane never has to invalidate a cancelled turn.
-# Turn-end touches follow a successful generation-bound apply; events rejected
-# as stale emit no notification.
+# The turn-end notification is raised by the generation-bound apply itself
+# (--turn-ended), under the writer lock; events rejected as stale emit none.
 # Cortex is not in Herdr's detection manifest (herdrdev/herdr discussion 783),
 # so on Herdr (HERDR_ENV=1 and a pane id in the hook environment) each hook
 # also reports the pane to Herdr as a `cortex` agent from source
@@ -47,7 +47,7 @@ report() {  # <working|idle|release>
 }
 start="$(report idle)"
 submit="$prefix busy $suffix --event user-prompt-submit >/dev/null 2>&1 || true; $(report working)"
-stop="$prefix idle $suffix --event stop >/dev/null 2>&1 && touch $(quote "$STATE/$ID.turn-ended"); $(report idle)"
+stop="$prefix idle $suffix --event stop --turn-ended >/dev/null 2>&1 || true; $(report idle)"
 end="$prefix idle $suffix --event session-end >/dev/null 2>&1 || true; $(report release)"
 final="$STATE/$ID.cortex-plugin"
 umask 077

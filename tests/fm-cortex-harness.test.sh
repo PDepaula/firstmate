@@ -148,6 +148,14 @@ rm "$state/worker.turn-ended"
 run_hook Stop
 [ "$(fm_busy_classify tmux fake:w cortex worker "$state")" = 'busy fm-spawn' ] || fail 'stale Stop cleared replacement'
 assert_absent "$state/worker.turn-ended" 'stale Stop woke replacement'
+stop_command=$(jq -r '.hooks.Stop[0].hooks[0].command' "$hooks")
+case "$stop_command" in
+  *' --turn-ended '*) ;;
+  *) fail 'Stop hook does not raise the turn-end notification under the apply lock' ;;
+esac
+case "$stop_command" in
+  *touch*) fail 'Stop hook touches the turn-end marker outside the apply lock' ;;
+esac
 wiring=$(fm_control_harness_wiring_paths cortex /unused "$state" worker)
 case "$wiring" in *"$hooks"*"$plugin/.cortex-plugin/plugin.json"*) ;; *) fail "plugin retirement paths missing: $wiring" ;; esac
 ! "$ROOT/bin/fm-cortex-plugin.sh" "$state" 'bad id' "$gen" 2>/dev/null || fail 'invalid task id accepted'
@@ -209,3 +217,23 @@ then fail "xhigh spawn failed: $out"; fi
 case "$(cat "$case_dir/launch-xhigh")" in *--effort*) fail 'xhigh reached Cortex argv, which has no such level' ;; esac
 assert_grep 'effort=xhigh' "$home/state/cortex-xhigh.meta" 'effort not recorded'
 pass "scout launch carries autonomy, plugin, typed brief and hooks; xhigh effort omitted"
+
+# Only tmux and Herdr supply the Cortex identity that lets its titled composer
+# read empty, so every other spawn-capable backend is refused before any
+# endpoint, worktree, or busy record exists.
+cat > "$fakebin/orca" <<'EOF'
+#!/bin/sh
+printf '%s\n' '{"ok":true,"result":{"runtime":{"reachable":true,"state":"ready"}}}'
+EOF
+chmod +x "$fakebin/orca"
+for backend in zellij cmux orca; do
+  fm_test_spawn_brief "$home" "cortex-$backend"
+  if out=$(FM_FAKE_LAUNCH_LOG="$case_dir/cortex-$backend.launch" fm_test_run_spawn "$home" "$wt" "$fakebin" "cortex-$backend" "$proj" \
+    --scout --harness cortex --backend "$backend" 2>&1)
+  then fail "Cortex launch accepted on backend=$backend"; fi
+  assert_contains "$out" "cortex is verified on the tmux and herdr backends only; backend=$backend" "wrong refusal on $backend: $out"
+  assert_absent "$case_dir/cortex-$backend.launch" "Cortex launched on $backend"
+  assert_absent "$home/state/cortex-$backend.meta" "refused $backend spawn left a task record"
+  assert_absent "$home/state/cortex-$backend.busy-gen" "refused $backend spawn armed busy state"
+done
+pass "Cortex launches are refused on zellij, cmux, and orca"
