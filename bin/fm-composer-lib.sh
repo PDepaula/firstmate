@@ -39,6 +39,13 @@
 #               (tmux exact process name, herdr native agent probe). Opt-in:
 #               only then is a TITLED rounded top rule tolerated as a
 #               composer; without it a titled box stays ambiguous.
+#   cortex=ask  the caller can probe identity lazily (it declares identity=1)
+#               and has no foreground-process proof of its own: the verdict
+#               is `need-identity` when the bottom-most composer shape is a
+#               titled rounded box with an agent prompt glyph, the only
+#               shape Cortex's identity could change. A probe answering
+#               `cortex` then proves it, as cortex=1 does. Other callers
+#               never see this sentinel for a titled box.
 #   rows=<n>    the capture's bounded row count (informational).
 #
 # THE STRICT BLANK-ROW RULE (captain decision blank-row-injection-posture,
@@ -839,7 +846,7 @@ _fm_composer_titled_rule_row() {  # <trimmed-row> <plain-rule-spaces>
 _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap] [cortex]
   local pane=$1 cy=${2:-} cortex_proven=${4:-0}
   local line indent left_stripped trimmed kind family side_family
-  local top_inner top_spaces='' geometry_check=0 geometry_ambiguous=0 titled_top=0
+  local top_inner top_spaces='' geometry_check=0 geometry_ambiguous=0 titled_top=0 titled_cand=0
   local content_inner content_spaces bottom_inner bottom_spaces glyph
   local current_indent='' current_family='' row=0 top=-1 valid=0 content_rows=0
   # Complete-box results: the box containing the cursor (cursor mode) or the
@@ -847,6 +854,10 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap] 
   FM_COMPOSER_SCAN_BOX_TOP=-1
   FM_COMPOSER_SCAN_BOX_BOTTOM=-1
   FM_COMPOSER_SCAN_BOX_AMBIG=0
+  # 1 when the selected (bottom-most, or cursor-holding) complete box is a
+  # titled rounded box with an agent prompt glyph row that went unproven: the
+  # one shape a Cortex identity would change (see the cortex=ask capability).
+  FM_COMPOSER_SCAN_CORTEX_CANDIDATE=0
   FM_COMPOSER_SCAN_INCOMPLETE_BOX_FROM=-1
   FM_COMPOSER_SCAN_UNSAFE=0
   FM_COMPOSER_SCAN_CURSOR_EDGE=0
@@ -994,6 +1005,7 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap] 
       geometry_ambiguous=0
       geometry_check=1
       titled_top=0
+      titled_cand=0
       top_inner=$trimmed
       case "$family" in
         rounded) top_inner=${top_inner#╭}; top_inner=${top_inner%╮}; top_spaces=${top_inner//─/ } ;;
@@ -1022,6 +1034,8 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap] 
             top_spaces=${top_inner//─/ }
             top_spaces=$(printf '%s' "$top_spaces" | LC_ALL=C sed 's/[!-~]/ /g')
           else
+            [ "$family" != rounded ] || ! _fm_composer_titled_rule_inner_ok "$top_inner" \
+              || titled_cand=1
             geometry_check=0
             geometry_ambiguous=1
           fi
@@ -1060,6 +1074,8 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap] 
             FM_COMPOSER_SCAN_BOX_AMBIG=$geometry_ambiguous
             FM_COMPOSER_SCAN_BOX_GLYPH_ROW=$box_glyph_row
             FM_COMPOSER_SCAN_BOX_GLYPH=$box_glyph
+            FM_COMPOSER_SCAN_CORTEX_CANDIDATE=0
+            [ "$titled_cand" != 1 ] || [ "$box_glyph_row" -lt 0 ] || FM_COMPOSER_SCAN_CORTEX_CANDIDATE=1
           fi
         else
           FM_COMPOSER_SCAN_BOX_TOP=$top
@@ -1067,6 +1083,8 @@ _fm_composer_scan_screen() {  # <plain-screen> <cursor-or-empty> [extract-wrap] 
           FM_COMPOSER_SCAN_BOX_AMBIG=$geometry_ambiguous
           FM_COMPOSER_SCAN_BOX_GLYPH_ROW=$box_glyph_row
           FM_COMPOSER_SCAN_BOX_GLYPH=$box_glyph
+          FM_COMPOSER_SCAN_CORTEX_CANDIDATE=0
+          [ "$titled_cand" != 1 ] || [ "$box_glyph_row" -lt 0 ] || FM_COMPOSER_SCAN_CORTEX_CANDIDATE=1
         fi
         FM_COMPOSER_SCAN_INCOMPLETE_BOX_FROM=-1
       else
@@ -2041,7 +2059,7 @@ fm_composer_dialog_sink_release() {
 
 fm_composer_classify_screen() {  # <caps> <screen> [cursor_row] [identity]
   local caps=$1 screen=$2 cy=${3:-} identity=${4:-}
-  local styled=0 cursor=0 has_identity=0 cortex_proven=0 kv plain
+  local styled=0 cursor=0 has_identity=0 cortex_proven=0 cortex_ask=0 kv plain
   # Note the dialog before any early return so a pending picker is still named.
   fm_composer_note_blocking_dialog "$screen" || true
   while IFS= read -r kv; do
@@ -2050,6 +2068,7 @@ fm_composer_classify_screen() {  # <caps> <screen> [cursor_row] [identity]
       cursor=1) cursor=1 ;;
       identity=1) has_identity=1 ;;
       cortex=1) cortex_proven=1 ;;
+      cortex=ask) cortex_ask=1 ;;
     esac
   done <<EOF
 $caps
@@ -2062,6 +2081,7 @@ EOF
       commandcode|cmd)
         local FM_COMPOSER_GHOST_LUMA_MAX=160
         ;;
+      cortex) cortex_proven=1 ;;
     esac
   fi
   [ "$cursor" = 1 ] || cy=''
@@ -2070,6 +2090,15 @@ EOF
   fi
   plain=$(printf '%s\n' "$screen" | fm_composer_strip_ansi)
   _fm_composer_scan_screen "$plain" "$cy" '' "$cortex_proven"
+  # The lazy Cortex identity pass: only a caller that asked for it
+  # (cortex=ask), has not yet supplied an identity, and sees a titled rounded
+  # glyph box as its selected shape needs the probe; every other read keeps
+  # its verdict without one.
+  if [ "$cortex_ask" = 1 ] && [ "$has_identity" = 1 ] && [ -z "$identity" ] \
+     && [ "$FM_COMPOSER_SCAN_CORTEX_CANDIDATE" = 1 ]; then
+    printf 'need-identity'
+    return 0
+  fi
   if [ -n "$cy" ]; then
     # Cursor mode (tmux): the shape CONTAINING the cursor is the composer.
     if [ "$FM_COMPOSER_SCAN_UNSAFE" = 1 ]; then
