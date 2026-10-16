@@ -1,0 +1,3 @@
+non-cortex pane (sleep foreground) showing identical Cortex screen:
+is_cortex: no
+verdict: unknown

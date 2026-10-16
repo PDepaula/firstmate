@@ -1,0 +1,5 @@
+foreground is cortex: yes
+idle composer verdict (real cortex): empty
+after typing draft (no submit): pending
+17: › hello draft
+after Ctrl+U clear: empty

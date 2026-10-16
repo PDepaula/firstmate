@@ -1,0 +1,7 @@
+caps[]: noid=empty cortexid=empty
+caps[cortex=ask]: noid=empty cortexid=empty
+caps[cortex=1]: noid=empty cortexid=empty
+MAIN
+caps[]: noid=unknown cortexid=unknown
+caps[cortex=ask]: noid=unknown cortexid=unknown
+caps[cortex=1]: noid=unknown cortexid=unknown

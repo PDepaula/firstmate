@@ -1,0 +1,6 @@
+agent get: {"agent":"cortex","agent_status":"idle","cwd":"/tmp/cxherdr.9Bnlyi/wd","focused":true,"foreground_cwd":"/tmp/cxherdr.9Bnlyi/wd","pane_id":"w1:p1","revision":2,"state_change_seq":1,"tab_id":"w1:t1","terminal_id":"term_65dfa03afc7411","terminal_title":"cortex","terminal_title_stripped":"cortex","workspace_id":"w1"}
+composer_state idle: empty
+agent get calls during idle read: 0
+composer_state draft: pending
+agent get calls during draft read: 0
+30: › hello draft
