@@ -1,0 +1,15 @@
+
+ › [Hook] Session context (ctrl+o to expand)
+
+> Reply with the single word OK and nothing else.
+
+* OK
+Auto used claude-opus-5-5
+View session usage with /stats · Rate this session with /feedback rate
+
+╭─────────────────────────────── Implementing single-word OK acknowledgment response logic ──╮
+ › draft text here
+╰────────────────────────────────────────────────────────────────────────────────────────────╯
+
+>> bypass safeguards  |  teams: off  |  plan: off  |  guard: off                     ⧉ GN07031
+view: compact (ctrl+o to cycle) • ? for help

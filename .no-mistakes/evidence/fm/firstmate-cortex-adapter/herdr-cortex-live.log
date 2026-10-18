@@ -1,0 +1,10 @@
+ › Type your message...
+╰────────────────────────────────────────────────────────────────────────────────────────────╯
+
+>> bypass safeguards  |  teams: off  |  plan: off  |  guard: off                     ⧉ GN07031
+view: compact (ctrl+o to cycle) • ? for help
+t=1 empty
+agent get:
+{"agent":"cortex","agent_session":{"agent":"claude","kind":"id","source":"herdr:claude","value":"5fa9bbeb-aaa2-45ce-8eb3-2ca370d52667"},"agent_status":"idle","cwd":"/home/pdp/claude_code_stage_dir/tmp.dIlNNeRmi6/proj","focused":true,"foreground_cwd":"/home/pdp/claude_code_stage_dir/tmp.dIlNNeRmi6/proj","pane_id":"w1:p1","revision":3,"state_change_seq":1,"tab_id":"w1:t1","terminal_id":"term_65e1404b7a08e1","terminal_title":"Implementing single-word OK acknowledgment response logic (cortex)","terminal_title_stripped":"Implementing single-word OK acknowledgment response logic (cortex)","workspace_id":"w1"}
+composer idle verdict: empty
+composer with draft verdict: pending
