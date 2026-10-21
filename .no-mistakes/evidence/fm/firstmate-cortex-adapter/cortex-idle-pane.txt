@@ -1,24 +1,24 @@
-╭─ Cortex Code v1.2.14 ───────────────────────────────┬───────────────────────────────────────╮
-│                                                     │                                       │
-│     ░░░░░░                                          │  Agent Connection:     GN07031        │
-│    ░ ░░░░░░░░                            ░░░░░░     │  SQL Connection:       GN07031        │
-│   ░░░░░░░░░░░░░                         ░░░░░░░░░   │  Warehouse:            N/A            │
-│   *        *                   *      ░░░░░░░       │  Model:                auto           │
-│        ▄ ▄              *                    *      │                                       │
-│                                            *        │  Check out what's new with /changelog │
-│                      *                              │                                       │
-├─────         ───────────────────────────────────────┴───────────────────────────────────────┤
-│                                    /tmp/cxlab.Ie6YPW/wd                                     │
-╰─────────────────────────────────────────────────────────────────────────────────────────────╯
 
- › [Hook] Session context (ctrl+o to expand)
+Update available!
+Current: 1.2.14+213013.25aeae2a44ca
+Latest:  1.2.18+192728.aa2238062732
 
-╭─────────────────────────────────────────────────────────────────────────────────────────────────────── New Session ──╮
- › Type your message...
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Downloading and installing update...
+(To disable auto-update, set "autoUpdate": false in settings.json or use --no-auto-update)
 
->> bypass safeguards  |  teams mode: off  |  plan mode: off  |  guardrails: off                                ⧉ GN07031
-view: compact (ctrl+o to cycle) • ? for help
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,40 @@
+
+ ╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+ │                                                                                                                                        │
+ │  Do you trust this project?                                                                                                            │
+ │                                                                                                                                        │
+ │  /home/pdp/claude_code_stage_dir/fm-lab.AQ4mti/proj                                                                                    │
+ │                                                                                                                                        │
+ │  This project contains configuration that Cortex Code will load and execute automatically. Settings may define hooks, MCP servers,     │
+ │  and plugins that run commands on your machine without additional prompts.                                                             │
+ │                                                                                                                                        │
+ ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+ ❯ 1. Yes, proceed
+   2. No, exit
+
+ ↑↓ navigate • y/n select • enter confirm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

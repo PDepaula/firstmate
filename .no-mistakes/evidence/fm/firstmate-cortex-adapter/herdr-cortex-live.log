@@ -1,10 +1,36 @@
+ › [Hook] Session context (ctrl+o to expand)
+╭───────────────────────────────────────────────────────────────────────────── New Session ──╮
  › Type your message...
 ╰────────────────────────────────────────────────────────────────────────────────────────────╯
-
+>> bypass safeguards  |  teams: off  |  plan: off  |  guard: off       ⠸ Connecting to GN07031
+view: compact (ctrl+o to cycle) • ? for help
+agent before report: {"agent":"cortex","agent_status":"idle"}
+UNREGISTERED idle composer: empty
+herdr pane commands:
+  herdr pane list [--workspace <workspace_id>]
+  herdr pane current [--pane ID|--current]
+  herdr pane get <pane_id>
+  herdr pane layout [--pane ID|--current]
+  herdr pane process-info [--pane ID|--current]
+  herdr pane neighbor --direction left|right|up|down [--pane ID|--current]
+  herdr pane edges [--pane ID|--current]
+  herdr pane focus --direction left|right|up|down [--pane ID|--current]
+  herdr pane resize --direction left|right|up|down [--amount FLOAT] [--pane ID|--current]
+  herdr pane zoom [<pane_id>|--pane ID|--current] [--toggle|--on|--off]
+  herdr pane rename <pane_id> <label>|--clear
+  herdr pane read <pane_id> [--source visible|recent|recent-unwrapped] [--lines N] [--format text|ansi] [--ansi]
+  herdr pane input [<pane_id>|--pane ID|--current] --right-click herdr|pane
+  herdr pane split [<pane_id>|--pane ID|--current] --direction right|down [--ratio FLOAT] [--cwd PATH] [--env KEY=VALUE] [--right-click herdr|pane] [--focus] [--no-focus]
+  herdr pane swap --direction left|right|up|down [--pane ID|--current]
+  herdr pane swap --source-pane ID --target-pane ID
+  herdr pane move <pane_id> --tab <tab_id> --split right|down [--target-pane ID] [--ratio FLOAT] [--focus|--no-focus]
+  herdr pane move <pane_id> --new-tab [--workspace ID] [--label TEXT] [--focus|--no-focus]
+  herdr pane move <pane_id> --new-workspace [--label TEXT] [--tab-label TEXT] [--focus|--no-focus]
+agent after report: {"agent":"cortex","agent_status":"idle"}
+REGISTERED idle composer: empty
+REGISTERED with draft: pending
+╭───────────────────────────────────────────────────────────────────────────── New Session ──╮
+ › draft not sent
+╰────────────────────────────────────────────────────────────────────────────────────────────╯
 >> bypass safeguards  |  teams: off  |  plan: off  |  guard: off                     ⧉ GN07031
 view: compact (ctrl+o to cycle) • ? for help
-t=1 empty
-agent get:
-{"agent":"cortex","agent_session":{"agent":"claude","kind":"id","source":"herdr:claude","value":"5fa9bbeb-aaa2-45ce-8eb3-2ca370d52667"},"agent_status":"idle","cwd":"/home/pdp/claude_code_stage_dir/tmp.dIlNNeRmi6/proj","focused":true,"foreground_cwd":"/home/pdp/claude_code_stage_dir/tmp.dIlNNeRmi6/proj","pane_id":"w1:p1","revision":3,"state_change_seq":1,"tab_id":"w1:t1","terminal_id":"term_65e1404b7a08e1","terminal_title":"Implementing single-word OK acknowledgment response logic (cortex)","terminal_title_stripped":"Implementing single-word OK acknowledgment response logic (cortex)","workspace_id":"w1"}
-composer idle verdict: empty
-composer with draft verdict: pending
